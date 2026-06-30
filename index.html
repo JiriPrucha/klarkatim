@@ -28,12 +28,31 @@
   <div class="video-overlay" id="videoOverlay" aria-hidden="true">
     <button class="close-btn" id="closeBtn" type="button" aria-label="Close video">&times;</button>
 
-    <!-- 💕💕💕 IF YOUR VIDEO HAS A DIFFERENT NAME, CHANGE "video.mp4" IN THE LINE BELOW 💕💕💕 -->
-    <video id="video" playsinline controls preload="metadata">
-      <source src="video.mp4" type="video/mp4" />
-      Your browser cannot play this video.
-    </video>
-    <!-- 💕💕💕 END OF EDITABLE VIDEO SOURCE 💕💕💕 -->
+    <!-- The main message video -->
+    <div class="media-stage main-stage active" id="mainStage">
+      <!-- 💕💕💕 IF YOUR VIDEO HAS A DIFFERENT NAME, CHANGE "video.mp4" IN THE LINE BELOW 💕💕💕 -->
+      <video id="video" playsinline controls preload="metadata" poster="video-poster.jpg">
+        <source src="video.mp4" type="video/mp4" />
+        Your browser cannot play this video.
+      </video>
+      <!-- 💕💕💕 END OF EDITABLE VIDEO SOURCE 💕💕💕 -->
+    </div>
+
+    <!-- The spinning wheel — appears after the message ends, waits for a tap to spin -->
+    <div class="media-stage wheel-stage" id="wheelStage" aria-hidden="true">
+      <div class="wheel-frame">
+        <div class="wheel-glow" aria-hidden="true"></div>
+        <!-- 💕💕💕 IF YOUR WHEEL VIDEO HAS A DIFFERENT NAME, CHANGE "spinningwheel.mp4" BELOW 💕💕💕 -->
+        <video id="wheel" playsinline muted preload="auto" poster="wheel-poster.jpg"
+               disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+          <source src="spinningwheel.mp4" type="video/mp4" />
+        </video>
+        <!-- 💕💕💕 END OF EDITABLE WHEEL SOURCE 💕💕💕 -->
+        <button class="spin-hint" id="spinHint" type="button" aria-label="Tap the wheel to spin">
+          <span>tap the wheel to spin &#10024;</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>

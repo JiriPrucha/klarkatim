@@ -238,13 +238,38 @@ body {
   pointer-events: auto;
 }
 
+/* ---------- Media stages (stacked: main video + spinning wheel) ---------- */
+
+.media-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+
+.media-stage.active {
+  opacity: 1;
+}
+
+/* Only let a stage catch clicks while the overlay is actually open. Otherwise the
+   invisible (opacity:0) main stage would sit on top of the page and swallow every
+   click / text selection, because pointer-events:auto on a child overrides the
+   hidden overlay's pointer-events:none. */
+.video-overlay.visible .media-stage.active {
+  pointer-events: auto;
+}
+
 #video {
   max-width: 90vw;
   max-height: 85vh;
   width: auto;
   height: auto;
   border-radius: 24px;
-  background: #000;
+  background: #fff;
   box-shadow:
     0 24px 60px rgba(255, 179, 209, 0.55),
     0 8px 24px rgba(230, 215, 242, 0.5),
@@ -253,8 +278,139 @@ body {
   transition: transform 0.7s cubic-bezier(0.22, 1.36, 0.55, 1);
 }
 
-.video-overlay.visible #video {
+.media-stage.active #video {
   transform: scale(1);
+}
+
+/* The wheel lives in a fixed 4:3 frame so the glow + hint always track it.
+   The frame keeps the same on-screen size as the main video (max 90vw / 85vh). */
+.wheel-frame {
+  position: relative;
+  width: min(90vw, calc(85vh * 4 / 3));
+  aspect-ratio: 4 / 3;
+  transform: scale(0.94);
+  transition: transform 0.7s cubic-bezier(0.22, 1.36, 0.55, 1);
+}
+
+.media-stage.active .wheel-frame {
+  transform: scale(1);
+}
+
+#wheel {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow:
+    0 24px 60px rgba(255, 179, 209, 0.55),
+    0 8px 24px rgba(230, 215, 242, 0.5),
+    0 0 0 6px rgba(255, 255, 255, 0.65);
+  /* The wheel must read as an interactive widget, never a video player */
+  cursor: pointer;
+}
+
+#wheel::-webkit-media-controls,
+#wheel::-webkit-media-controls-enclosure,
+#wheel::-webkit-media-controls-panel {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+#wheel::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* ---------- Spinning-wheel glow + tap hint ---------- */
+
+.wheel-glow {
+  position: absolute;
+  /* sized + placed relative to the frame, so it tracks the wheel
+     (which sits lower-left in the video) at every screen size */
+  width: 46%;
+  aspect-ratio: 1;
+  left: 27%;
+  top: 70%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255, 179, 209, 0.6),
+    rgba(230, 215, 242, 0.28) 45%,
+    rgba(230, 215, 242, 0) 70%);
+  filter: blur(22px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  animation: wheelGlowPulse 2.4s ease-in-out infinite;
+  z-index: 1;
+}
+
+.wheel-stage.active .wheel-glow {
+  opacity: 1;
+}
+
+.wheel-stage.spinning .wheel-glow {
+  opacity: 0;
+  animation: none; /* animation drives opacity, so it must stop for the fade-out to win */
+}
+
+@keyframes wheelGlowPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.65; }
+  50%      { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+}
+
+.spin-hint {
+  position: absolute;
+  /* centered under the wheel within the frame */
+  left: 27%;
+  bottom: 4%;
+  transform: translateX(-50%);
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.6rem;
+  background: linear-gradient(135deg, var(--rose) 0%, var(--lavender) 100%);
+  color: var(--plum);
+  font-family: "Quicksand", sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.95rem, 2.4vw, 1.25rem);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow:
+    0 12px 28px rgba(255, 179, 209, 0.55),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.45),
+    inset 0  2px 0 rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  animation: hintBob 2.4s ease-in-out infinite;
+  z-index: 2;
+}
+
+.wheel-stage.active .spin-hint {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.wheel-stage.spinning .spin-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.spin-hint:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+.spin-hint:focus-visible {
+  outline: 3px solid var(--plum);
+  outline-offset: 4px;
+}
+
+@keyframes hintBob {
+  0%, 100% { transform: translateX(-50%) translateY(0)    scale(1); }
+  50%      { transform: translateX(-50%) translateY(-5px) scale(1.035); }
 }
 
 .close-btn {
@@ -294,12 +450,16 @@ body {
   body,
   .message,
   .play-btn,
-  .heart {
+  .heart,
+  .wheel-glow,
+  .spin-hint {
     animation: none !important;
   }
 
   .stage,
   #video,
+  .wheel-frame,
+  .media-stage,
   .video-overlay,
   .close-btn,
   .play-btn {
@@ -320,5 +480,9 @@ body {
     width: 44px;
     height: 44px;
     font-size: 1.5rem;
+  }
+  .spin-hint {
+    bottom: 4%;
+    padding: 0.65rem 1.2rem;
   }
 }
