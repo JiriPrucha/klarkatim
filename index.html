@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&#9825;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="hearts" aria-hidden="true"></div>
+
+  <main class="stage" id="stage">
+    <!-- 💕💕💕 EDIT THE MESSAGE BELOW (between the > and <) 💕💕💕 -->
+    <h1 class="message">A little something for you &#9825;</h1>
+    <!-- 💕💕💕 END OF EDITABLE MESSAGE 💕💕💕 -->
+
+    <button class="play-btn" id="playBtn" type="button">
+      <span class="btn-text">Press me</span>
+    </button>
+  </main>
+
+  <div class="video-overlay" id="videoOverlay" aria-hidden="true">
+    <button class="close-btn" id="closeBtn" type="button" aria-label="Close video">&times;</button>
+
+    <!-- 💕💕💕 IF YOUR VIDEO HAS A DIFFERENT NAME, CHANGE "video.mp4" IN THE LINE BELOW 💕💕💕 -->
+    <video id="video" playsinline controls preload="metadata">
+      <source src="video.mp4" type="video/mp4" />
+      Your browser cannot play this video.
+    </video>
+    <!-- 💕💕💕 END OF EDITABLE VIDEO SOURCE 💕💕💕 -->
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

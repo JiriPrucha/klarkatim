@@ -1,0 +1,324 @@
+:root {
+  --blush:    #FFD9E8;
+  --lavender: #E6D7F2;
+  --cream:    #FFF4E6;
+  --rose:     #FFB3D1;
+  --plum:     #7A5C8A;
+  --plum-soft: rgba(122, 92, 138, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Quicksand", system-ui, sans-serif;
+  color: var(--plum);
+  overflow: hidden;
+  background: linear-gradient(135deg,
+    var(--blush) 0%,
+    var(--lavender) 35%,
+    var(--cream) 65%,
+    var(--blush) 100%);
+  background-size: 300% 300%;
+  animation: drift 18s ease-in-out infinite;
+}
+
+@keyframes drift {
+  0%   { background-position:   0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position:   0% 50%; }
+}
+
+/* ---------- Stage ---------- */
+
+.stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 2rem;
+  text-align: center;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.stage.fading-out {
+  opacity: 0;
+  transform: scale(0.94);
+  pointer-events: none;
+}
+
+/* ---------- Message ---------- */
+
+.message {
+  font-family: "Quicksand", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+  color: var(--plum);
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  text-shadow: 0 4px 18px var(--plum-soft);
+  animation: bob 4s ease-in-out infinite;
+  max-width: 22ch;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ---------- Play button ---------- */
+
+.play-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.15rem 2.8rem;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--rose) 0%, var(--lavender) 100%);
+  color: var(--plum);
+  font-family: "Quicksand", sans-serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow:
+    0 14px 34px rgba(255, 179, 209, 0.55),
+    0 4px 10px rgba(230, 215, 242, 0.5),
+    inset 0 -3px 0 rgba(255, 255, 255, 0.45),
+    inset 0  2px 0 rgba(255, 255, 255, 0.7);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1.36, 0.55, 1),
+    box-shadow 0.25s ease;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.play-btn::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255, 179, 209, 0.55),
+    rgba(230, 215, 242, 0));
+  filter: blur(14px);
+  opacity: 0.6;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.play-btn:hover {
+  transform: scale(1.07);
+  box-shadow:
+    0 20px 40px rgba(255, 179, 209, 0.7),
+    0 6px 14px rgba(230, 215, 242, 0.6),
+    inset 0 -3px 0 rgba(255, 255, 255, 0.5),
+    inset 0  2px 0 rgba(255, 255, 255, 0.8);
+}
+
+.play-btn:hover::before {
+  opacity: 1;
+}
+
+.play-btn:active {
+  transform: scale(0.96);
+}
+
+.play-btn:focus-visible {
+  outline: 3px solid var(--plum);
+  outline-offset: 4px;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.035); }
+}
+
+/* ---------- Floating hearts ---------- */
+
+.hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.heart {
+  --size: 20px;
+  --color: var(--rose);
+  position: absolute;
+  bottom: -40px;
+  width: var(--size);
+  height: var(--size);
+  transform: rotate(-45deg);
+  background: var(--color);
+  opacity: 0;
+  animation-name: floatUp;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 2px 6px rgba(255, 179, 209, 0.4));
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  background: var(--color);
+  border-radius: 50%;
+}
+
+.heart::before {
+  top: calc(var(--size) * -0.5);
+  left: 0;
+}
+
+.heart::after {
+  top: 0;
+  left: calc(var(--size) * 0.5);
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) translateX(0) rotate(-45deg) scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateY(-50vh) translateX(20px) rotate(-25deg) scale(0.9);
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-110vh) translateX(-20px) rotate(-65deg) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ---------- Video overlay ---------- */
+
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(255, 244, 230, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+  z-index: 10;
+}
+
+.video-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#video {
+  max-width: 90vw;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  border-radius: 24px;
+  background: #000;
+  box-shadow:
+    0 24px 60px rgba(255, 179, 209, 0.55),
+    0 8px 24px rgba(230, 215, 242, 0.5),
+    0 0 0 6px rgba(255, 255, 255, 0.65);
+  transform: scale(0.94);
+  transition: transform 0.7s cubic-bezier(0.22, 1.36, 0.55, 1);
+}
+
+.video-overlay.visible #video {
+  transform: scale(1);
+}
+
+.close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--plum);
+  font-family: "Quicksand", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    0 8px 20px rgba(255, 179, 209, 0.4),
+    inset 0 -2px 0 rgba(255, 179, 209, 0.3);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.12) rotate(90deg);
+  background: var(--blush);
+}
+
+.close-btn:focus-visible {
+  outline: 3px solid var(--plum);
+  outline-offset: 3px;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .message,
+  .play-btn,
+  .heart {
+    animation: none !important;
+  }
+
+  .stage,
+  #video,
+  .video-overlay,
+  .close-btn,
+  .play-btn {
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 480px) {
+  .play-btn {
+    font-size: 1.2rem;
+    padding: 1rem 2.2rem;
+  }
+  .close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+  }
+}
